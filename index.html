@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Smart Surveillance | Firearms Detection System</title>
+    <meta name="description"
+        content="Advanced AI-based surveillance system for firearms and object detection monitoring">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        #particle-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a0a2e 50%, #0a0e1a 100%);
+            overflow-x: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .soft-shadow {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .text-gradient {
+            background: linear-gradient(90deg, #8b9cff, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.14);
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="hero-content min-h-screen flex items-center justify-center px-6">
+        <div class="max-w-5xl mx-auto text-center">
+
+            <!-- Badge -->
+            <div class="mb-6">
+                <span class="glass-card text-sm text-gray-300 px-4 py-1.5 rounded-full">
+                    Intelligent Threat Detection System
+                </span>
+            </div>
+
+            <!-- Heading -->
+            <h1 class="text-5xl md:text-6xl font-semibold text-white mb-6 leading-tight">
+                <span class="text-gradient">AI-Powered</span><br>
+                Smart Surveillance
+            </h1>
+
+            <!-- Subtext -->
+            <p class="text-lg md:text-xl text-gray-400 mb-14 max-w-2xl mx-auto leading-relaxed">
+                Advanced real-time monitoring designed to detect firearms, identify threats,
+                and enhance security with precision-driven artificial intelligence.
+            </p>
+
+            <!-- Features -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
+
+                <div class="glass-card soft-shadow rounded-2xl p-6 text-left">
+                    <div class="text-xl mb-3">🎯</div>
+                    <h3 class="text-white font-medium mb-2">
+                        Real-time Detection
+                    </h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Instant identification of potential threats with high accuracy and minimal latency.
+                    </p>
+                </div>
+
+                <div class="glass-card soft-shadow rounded-2xl p-6 text-left">
+                    <div class="text-xl mb-3">🔍</div>
+                    <h3 class="text-white font-medium mb-2">
+                        Smart Analytics
+                    </h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Actionable insights and reporting to support informed security decisions.
+                    </p>
+                </div>
+
+                <div class="glass-card soft-shadow rounded-2xl p-6 text-left">
+                    <div class="text-xl mb-3">⚡</div>
+                    <h3 class="text-white font-medium mb-2">
+                        Instant Alerts
+                    </h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Immediate notifications for critical events requiring attention.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- CTA -->
+            <a href="dashboard.html"
+                class="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-medium
+                       text-white btn-primary transition duration-300">
+
+                Open Dashboard
+
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+            </a>
+
+        </div>
+    </div>
+
+    <!-- Particle Script (UNCHANGED) -->
+    <script>
+        const canvas = document.getElementById('particle-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.position.z = 50;
+
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 2000;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for (let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 100;
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.1,
+            color: 0x00d4ff,
+            transparent: true,
+            opacity: 0.6,
+            blending: THREE.AdditiveBlending
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        let mouseX = 0;
+        let mouseY = 0;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            particlesMesh.rotation.y += 0.001;
+            particlesMesh.rotation.x += 0.0005;
+
+            particlesMesh.rotation.y += mouseX * 0.00005;
+            particlesMesh.rotation.x += mouseY * 0.00005;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+
+</html>

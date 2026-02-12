@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detection Logs | AI Surveillance</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/main.css">
+
+    <style>
+        .sidebar {
+            width: 260px;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .main-content {
+            margin-left: 260px;
+        }
+
+        .sidebar-menu a {
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 3px solid var(--accent-primary);
+            padding-left: 1.25rem;
+        }
+
+        .sidebar-menu a.active {
+            background: rgba(0, 212, 255, 0.15);
+            border-left: 3px solid var(--accent-primary);
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .log-row {
+            transition: all 0.2s ease;
+        }
+
+        .log-row:hover {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .filters-bar {
+            padding: 1rem 1.25rem;
+        }
+
+        .table-head th {
+            font-size: 11px;
+            letter-spacing: 0.08em;
+        }
+
+        .table-cell {
+            padding-top: 0.9rem;
+            padding-bottom: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                z-index: 50;
+                height: 100vh;
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar fixed left-0 top-0 h-screen glass-strong overflow-y-auto">
+        <div class="p-6">
+
+            <div class="flex items-center gap-3 mb-10">
+                <svg class="w-9 h-9" viewBox="0 0 100 100" fill="none">
+                    <circle cx="50" cy="50" r="45" stroke="url(#grad1)" stroke-width="3" opacity="0.3" />
+                    <path d="M50 20 L50 80 M20 50 L80 50" stroke="url(#grad1)" stroke-width="2" />
+                    <circle cx="50" cy="50" r="7" fill="url(#grad1)" />
+                    <defs>
+                        <linearGradient id="grad1">
+                            <stop offset="0%" style="stop-color:#00d4ff" />
+                            <stop offset="100%" style="stop-color:#0099ff" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <div>
+                    <h2 class="text-lg font-semibold text-white">AI Surveillance</h2>
+                    <p class="text-xs text-gray-400">Detection System</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu space-y-2 text-sm">
+                <a href="home.html" class="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:text-white">
+                    Home
+                </a>
+
+                <a href="analytics.html" class="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:text-white">
+                    Analytics
+                </a>
+
+                <a href="detection-logs.html"
+                    class="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:text-white active">
+                    Detection Logs
+                </a>
+
+                <a href="live-monitoring.html"
+                    class="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:text-white">
+                    Live Monitoring
+                </a>
+
+                <a href="settings.html"
+                    class="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:text-white">
+                    Settings
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main-content min-h-screen">
+
+        <!-- Navbar -->
+        <nav class="glass sticky top-0 z-40 border-b border-gray-700">
+            <div class="px-6 py-4 flex items-center justify-between">
+
+                <div class="flex items-center gap-4">
+                    <button id="sidebar-toggle" class="md:hidden text-gray-300 hover:text-white">
+                        ☰
+                    </button>
+                    <h1 id="page-title" class="text-lg font-semibold text-white">
+                        Detection Logs
+                    </h1>
+                </div>
+
+                <div
+                    class="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white text-sm font-semibold">
+                    AD
+                </div>
+            </div>
+        </nav>
+
+        <!-- Content -->
+        <main class="p-6">
+            <div class="max-w-7xl mx-auto">
+
+                <!-- Filters -->
+                <div
+                    class="glass-strong filters-bar rounded-xl mb-6 border border-gray-700 flex flex-wrap gap-4 items-center justify-between">
+
+                    <div class="flex gap-2 flex-wrap">
+                        <button class="btn btn-primary btn-sm" onclick="filterLogs('all')">All</button>
+                        <button class="btn btn-secondary btn-sm" onclick="filterLogs('threat')">Threats Only</button>
+                        <button class="btn btn-secondary btn-sm" onclick="filterLogs('safe')">Safe Only</button>
+                        <button class="btn btn-secondary btn-sm" onclick="filterLogs('warning')">Warnings</button>
+                    </div>
+
+                    <div class="flex-1 max-w-md">
+                        <input type="text" placeholder="Search logs..."
+                            class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:border-cyan-500 focus:outline-none transition text-sm">
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="glass-strong rounded-xl border border-gray-700 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+
+                            <thead class="bg-gray-800 bg-opacity-40 table-head">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-gray-400 uppercase">ID</th>
+                                    <th class="px-6 py-3 text-left text-gray-400 uppercase">Date & Time</th>
+                                    <th class="px-6 py-3 text-left text-gray-400 uppercase">Type</th>
+                                    <th class="px-6 py-3 text-left text-gray-400 uppercase">Confidence</th>
+                                    <th class="px-6 py-3 text-left text-gray-400 uppercase">Camera</th>
+                                    <th class="px-6 py-3 text-left text-gray-400 uppercase">Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="logs-tbody" class="divide-y divide-gray-700">
+                                <!-- JS Injected Rows -->
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="assets/js/mock-data.js"></script>
+    <script src="assets/js/navigation.js"></script>
+
+    <script>
+        function renderLogs(filter = 'all') {
+            const tbody = document.getElementById('logs-tbody');
+            let logsToDisplay = detectionLogs;
+
+            if (filter !== 'all') {
+                logsToDisplay = detectionLogs.filter(log => log.status === filter);
+            }
+
+            tbody.innerHTML = logsToDisplay.map(log => `
+        <tr class="log-row">
+          <td class="px-6 table-cell text-sm text-gray-400">#${log.id.toString().padStart(4, '0')}</td>
+          <td class="px-6 table-cell text-sm text-white">${log.datetime}</td>
+          <td class="px-6 table-cell text-sm text-white">${log.type}</td>
+          <td class="px-6 table-cell text-sm">
+            <div class="flex items-center gap-2">
+              <div class="flex-1 bg-gray-700 rounded-full h-1.5 max-w-[100px]">
+                <div class="h-1.5 rounded-full ${log.status === 'threat' ? 'bg-red-500' : log.status === 'warning' ? 'bg-yellow-500' : 'bg-cyan-500'}" 
+                     style="width: ${log.confidence}%"></div>
+              </div>
+              <span class="text-gray-300 text-xs">${log.confidence}%</span>
+            </div>
+          </td>
+          <td class="px-6 table-cell text-sm text-gray-300">${log.camera}</td>
+          <td class="px-6 table-cell">
+            ${log.status === 'threat'
+                    ? '<span class="badge badge-danger">Threat</span>'
+                    : log.status === 'warning'
+                        ? '<span class="badge badge-warning">Warning</span>'
+                        : '<span class="badge badge-success">Safe</span>'
+                }
+          </td>
+        </tr>
+      `).join('');
+        }
+
+        function filterLogs(type) {
+            renderLogs(type);
+
+            document.querySelectorAll('.btn-sm').forEach(btn => {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-secondary');
+            });
+
+            event.target.classList.remove('btn-secondary');
+            event.target.classList.add('btn-primary');
+        }
+
+        renderLogs();
+    </script>
+</body>
+
+</html>

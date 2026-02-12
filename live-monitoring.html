@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Monitoring | AI Surveillance</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/main.css">
+
+    <style>
+        .sidebar {
+            width: 260px;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .main-content {
+            margin-left: 260px;
+        }
+
+        .sidebar-menu a {
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 3px solid var(--accent-primary);
+            padding-left: 1.25rem;
+        }
+
+        .sidebar-menu a.active {
+            background: rgba(0, 212, 255, 0.15);
+            border-left: 3px solid var(--accent-primary);
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .video-feed {
+            position: relative;
+            background: linear-gradient(135deg, #1a1f2e 0%, #0a0e1a 100%);
+            border-radius: 0.9rem;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+        }
+
+        .scan-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .detection-box {
+            position: absolute;
+            border: 2px solid #00d4ff;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section-card {
+            padding: 1.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                z-index: 50;
+                height: 100vh;
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar fixed left-0 top-0 h-screen glass-strong overflow-y-auto">
+        <div class="p-6">
+
+            <div class="flex items-center gap-3 mb-10">
+                <svg class="w-9 h-9" viewBox="0 0 100 100" fill="none">
+                    <circle cx="50" cy="50" r="45" stroke="url(#grad1)" stroke-width="3" opacity="0.3" />
+                    <path d="M50 20 L50 80 M20 50 L80 50" stroke="url(#grad1)" stroke-width="2" />
+                    <circle cx="50" cy="50" r="7" fill="url(#grad1)" />
+                    <defs>
+                        <linearGradient id="grad1">
+                            <stop offset="0%" style="stop-color:#00d4ff" />
+                            <stop offset="100%" style="stop-color:#0099ff" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <div>
+                    <h2 class="text-lg font-semibold text-white">AI Surveillance</h2>
+                    <p class="text-xs text-gray-400">Detection System</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu space-y-2 text-sm">
+                <a href="home.html" class="flex px-4 py-3 rounded-lg text-gray-300 hover:text-white">Home</a>
+                <a href="analytics.html" class="flex px-4 py-3 rounded-lg text-gray-300 hover:text-white">Analytics</a>
+                <a href="detection-logs.html" class="flex px-4 py-3 rounded-lg text-gray-300 hover:text-white">Detection Logs</a>
+                <a href="live-monitoring.html" class="flex px-4 py-3 rounded-lg text-gray-300 hover:text-white active">Live Monitoring</a>
+                <a href="settings.html" class="flex px-4 py-3 rounded-lg text-gray-300 hover:text-white">Settings</a>
+            </nav>
+
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main-content min-h-screen">
+
+        <!-- Navbar -->
+        <nav class="glass sticky top-0 z-40 border-b border-gray-700">
+            <div class="px-6 py-4 flex items-center justify-between">
+
+                <div class="flex items-center gap-4">
+                    <button id="sidebar-toggle" class="md:hidden text-gray-300 hover:text-white">☰</button>
+                    <h1 id="page-title" class="text-lg font-semibold text-white">Live Monitoring</h1>
+                </div>
+
+                <div class="live-indicator">
+                    <span class="live-dot"></span>
+                    <span>LIVE</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Content -->
+        <main class="p-6">
+            <div class="max-w-7xl mx-auto">
+
+                <!-- Main Layout -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+
+                    <!-- Video Feed -->
+                    <div class="lg:col-span-2">
+                        <div class="glass-strong rounded-2xl section-card border border-gray-700">
+
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-base font-semibold text-white">
+                                    Camera Feed — Main Entrance
+                                </h2>
+                                <div class="live-indicator">
+                                    <span class="live-dot"></span>
+                                    <span>LIVE</span>
+                                </div>
+                            </div>
+
+                            <div class="video-feed" id="video-feed">
+
+                                <div class="scan-line"></div>
+
+                                <svg class="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 100 100"
+                                    preserveAspectRatio="none">
+                                    <defs>
+                                        <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                                            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="cyan" stroke-width="0.2" />
+                                        </pattern>
+                                    </defs>
+                                    <rect width="100" height="100" fill="url(#grid)" />
+                                </svg>
+
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <p class="text-gray-500 text-sm">Live Feed Active</p>
+                                        <p class="text-gray-600 text-xs mt-1">AI Detection Running</p>
+                                    </div>
+                                </div>
+
+                                <div id="detection-overlays"></div>
+                            </div>
+
+                            <!-- Controls -->
+                            <div class="grid grid-cols-3 gap-3 mt-4">
+                                <button class="btn btn-secondary">Record</button>
+                                <button class="btn btn-secondary">Screenshot</button>
+                                <button class="btn btn-secondary">Settings</button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Recent Detections -->
+                    <div>
+                        <div class="glass-strong rounded-2xl section-card border border-gray-700">
+                            <h3 class="text-sm font-semibold text-white mb-4">
+                                Recent Detections
+                            </h3>
+
+                            <div class="space-y-3 text-sm">
+                                <div class="p-3 bg-red-500 bg-opacity-10 rounded-lg border border-red-500 border-opacity-30">
+                                    <p class="font-semibold text-red-400 text-xs">Firearm Detected</p>
+                                    <p class="text-xs text-gray-400 mt-1">Cam-001 • 94.7%</p>
+                                </div>
+
+                                <div class="p-3 bg-blue-500 bg-opacity-10 rounded-lg border border-blue-500 border-opacity-30">
+                                    <p class="font-semibold text-blue-400 text-xs">Face Detected</p>
+                                    <p class="text-xs text-gray-400 mt-1">Cam-002 • 89.3%</p>
+                                </div>
+
+                                <div class="p-3 bg-yellow-500 bg-opacity-10 rounded-lg border border-yellow-500 border-opacity-30">
+                                    <p class="font-semibold text-yellow-400 text-xs">Suspicious Object</p>
+                                    <p class="text-xs text-gray-400 mt-1">Cam-001 • 78.5%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Camera Grid -->
+                <div class="glass-strong rounded-2xl section-card border border-gray-700">
+                    <h3 class="text-sm font-semibold text-white mb-4">
+                        All Cameras
+                    </h3>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-gray-800 rounded-lg aspect-video"></div>
+                        <div class="bg-gray-800 rounded-lg aspect-video"></div>
+                        <div class="bg-gray-800 rounded-lg aspect-video"></div>
+                        <div class="bg-gray-800 rounded-lg aspect-video"></div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="assets/js/navigation.js"></script>
+
+    <script>
+        function addRandomDetection() {
+            const overlay = document.getElementById('detection-overlays');
+            const box = document.createElement('div');
+
+            const x = Math.random() * 70 + 10;
+            const y = Math.random() * 70 + 10;
+            const w = Math.random() * 15 + 10;
+            const h = Math.random() * 15 + 10;
+
+            box.className = 'detection-box';
+            box.style.left = `${x}%`;
+            box.style.top = `${y}%`;
+            box.style.width = `${w}%`;
+            box.style.height = `${h}%`;
+
+            overlay.appendChild(box);
+
+            setTimeout(() => box.remove(), 3000);
+        }
+
+        setInterval(addRandomDetection, 5000);
+        setTimeout(addRandomDetection, 1000);
+    </script>
+
+</body>
+
+</html>
